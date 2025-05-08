@@ -11,6 +11,7 @@ import { Button } from "antd";
 import { Pagination } from "antd";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Skeleton } from "antd";
 
 const regions = ["africa", "americas", "antarctic", "asia", "europe", "oceania"];
 
@@ -22,6 +23,30 @@ export default function Countries() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    const fetchComCache = async () => {
+      const cacheKey = 'countriesData';
+      const cache = sessionStorage.getItem(cacheKey);
+
+      if (cache) {
+        setCountries(JSON.parse(cache));
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const resposta = await axios.get('https://restcountries.com/v3.1/all');
+        setCountries(resposta.data);
+        sessionStorage.setItem(cacheKey, JSON.stringify(resposta.data));
+      } catch (erro) {
+        alert('Erro ao buscar países');
+      }
+    };
+
+    fetchComCache();
+  }, []);
+
 
   const fetchCountries = async (region = "") => {
     setIsLoading(true);
@@ -42,10 +67,6 @@ export default function Countries() {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchCountries();
-  }, []);
 
   const resetFilter = () => fetchCountries();
 
@@ -87,7 +108,11 @@ export default function Countries() {
 
       <div className={styles.cardContainer}>
         {isLoading ? (
-          <Loading />
+          <Skeleton
+            active
+            paragraph={{ rows: 3 }}
+            title={{ width: 500 }}
+          />
         ) : (
           currentCountries.map((country, index) => (
             <CountryCard
