@@ -1,7 +1,10 @@
 import "./globals.css";
 
 export const metadata = {
-    title: "My Exam Mockup",
+    title: "Countries",
+    icons: {
+        icon: "/icons/favicon.ico",
+    },
     description: "Projeto pra mostrar tudo que eu sei",
 };
 
