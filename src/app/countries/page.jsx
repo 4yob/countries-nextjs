@@ -33,9 +33,11 @@ export default function Countries() {
       setCountries(response.data);
       if (!region) {
         setAllCountries(response.data);
+        toast.success("Países carregados com sucesso!");
       }
     } catch (error) {
       console.error("Erro ao carregar países:", error);
+      toast.error("Erro ao carregar países. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -50,10 +52,22 @@ export default function Countries() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentCountries = countries.slice(startIndex, endIndex);
+  const handleCardClick = (country) => {
+    toast.info(`Você clicou em: ${country.name.common}`, {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: true,
+    });
+  };
 
   return (
     <div className={styles.container}>
       <h1>Lista de Países do Mundo</h1>
+      <ToastContainer 
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={true}
+        />
       <div>
         {regions.map((region) => (
           <Button
@@ -80,6 +94,7 @@ export default function Countries() {
               key={index}
               country={country}
               onClick={() => setSelectedCountry(country)}
+              onCardClick={handleCardClick}
             />
           ))
         )}
